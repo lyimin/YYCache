@@ -5,20 +5,19 @@
 ### [简介](https://github.com/lyimin/YYCache#1、简介)
 ### [原理](https://github.com/lyimin/YYCache#2、原理)
 ### [YYCache源码分析](https://github.com/lyimin/YYCache#3、YYCache源码分析)
-
 ### [YYMemoryCache源码分析](https://github.com/lyimin/YYCache#4、YYMemoryCache源码分析)
 
 ### 1、简介
 
 [YYCache](https://github.com/ibireme/YYCache) 是2015年由[ibireme](https://github.com/ibireme)发布到Github的一个高性能、线程安全的缓存框架。笔者在阅读YYCache源码时并没有太大阻碍，
 代码质量很高，逻辑清晰，性能还非常好。下图时作者的测试性能数据：
-![YYMemoryCache](https://github.com/lyimin/YYCache/res/yymemorycache.png)
-![YYDiskCache](https://github.com/lyimin/YYCache/res/yydiskcache.png)
+![](https://github.com/lyimin/YYCache/blob/master/res/yymemorycache.png)
+![](https://github.com/lyimin/YYCache/blob/master/res/yydiskcache.png)
 
 ### 2、原理
 
 先看看YYCache大致框架
-![YYCache](https://github.com/lyimin/YYCache/res/yycache.png)
+![](https://github.com/lyimin/YYCache/blob/master/res/yycache.png)
 	
 - **YYCache**: 提供对外开发的相关接口。
 - **YYMemoryCache**: 提供容量小的内存缓存接口。
