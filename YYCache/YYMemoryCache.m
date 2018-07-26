@@ -21,8 +21,7 @@ static inline dispatch_queue_t YYMemoryCacheGetReleaseQueue() {
 }
 
 /**
- A node in linked map.
- Typically, you should not use this class directly.
+    相当于_YYLinkedMap的一个节点
  */
 @interface _YYLinkedMapNode : NSObject {
     @package
@@ -30,8 +29,8 @@ static inline dispatch_queue_t YYMemoryCacheGetReleaseQueue() {
     __unsafe_unretained _YYLinkedMapNode *_next; // retained by dic
     id _key;
     id _value;
-    NSUInteger _cost;
-    NSTimeInterval _time;
+    NSUInteger _cost; // 记录缓存对象大小
+    NSTimeInterval _time; // 记录缓存对象时间
 }
 @end
 
@@ -40,38 +39,28 @@ static inline dispatch_queue_t YYMemoryCacheGetReleaseQueue() {
 
 
 /**
- A linked map used by YYMemoryCache.
- It's not thread-safe and does not validate the parameters.
- 
- Typically, you should not use this class directly.
+    YYMemoryCache 内的一个链表
  */
 @interface _YYLinkedMap : NSObject {
     @package
-    CFMutableDictionaryRef _dic; // do not set object directly
+    CFMutableDictionaryRef _dic; 
     NSUInteger _totalCost;
     NSUInteger _totalCount;
-    _YYLinkedMapNode *_head; // MRU, do not change it directly
-    _YYLinkedMapNode *_tail; // LRU, do not change it directly
-    BOOL _releaseOnMainThread;
-    BOOL _releaseAsynchronously;
+    _YYLinkedMapNode *_head; // 链表
+    _YYLinkedMapNode *_tail; // 链尾
+    BOOL _releaseOnMainThread; // 是否在主线程清除
+    BOOL _releaseAsynchronously; // 是否在子线程清除对象
 }
 
-/// Insert a node at head and update the total cost.
-/// Node and node.key should not be nil.
+// 插入数据到链表
 - (void)insertNodeAtHead:(_YYLinkedMapNode *)node;
-
-/// Bring a inner node to header.
-/// Node should already inside the dic.
+// 移动数据到链表
 - (void)bringNodeToHead:(_YYLinkedMapNode *)node;
-
-/// Remove a inner node and update the total cost.
-/// Node should already inside the dic.
+// 删除数据
 - (void)removeNode:(_YYLinkedMapNode *)node;
-
-/// Remove tail node if exist.
+// 删除链尾数据
 - (_YYLinkedMapNode *)removeTailNode;
-
-/// Remove all node in background queue.
+// 删除所有数据
 - (void)removeAll;
 
 @end
@@ -90,19 +79,7 @@ static inline dispatch_queue_t YYMemoryCacheGetReleaseQueue() {
     CFRelease(_dic);
 }
 
-/*
- dictionary key: key value: node(_YYLinkedMapNode)
- 
- 1.head有值
- node.next = head
- node.prev = node
- head = node
- 
- 2.head没值
- head = node
- tail = node
- 
- */
+// 插入
 - (void)insertNodeAtHead:(_YYLinkedMapNode *)node {
     CFDictionarySetValue(_dic, (__bridge const void *)(node->_key), (__bridge const void *)(node));
     _totalCost += node->_cost;
@@ -189,9 +166,9 @@ static inline dispatch_queue_t YYMemoryCacheGetReleaseQueue() {
 
 
 @implementation YYMemoryCache {
-    pthread_mutex_t _lock;
-    _YYLinkedMap *_lru;
-    dispatch_queue_t _queue;
+    pthread_mutex_t _lock; // 线程锁
+    _YYLinkedMap *_lru; // 链表
+    dispatch_queue_t _queue; // 串行队列
 }
 
 - (void)_trimRecursively {

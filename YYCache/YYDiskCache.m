@@ -78,9 +78,9 @@ static void _YYDiskCacheSetGlobal(YYDiskCache *cache) {
 
 
 @implementation YYDiskCache {
-    YYKVStorage *_kv;
-    dispatch_semaphore_t _lock;
-    dispatch_queue_t _queue;
+    YYKVStorage *_kv; // 数据操作类
+    dispatch_semaphore_t _lock; // 线程锁
+    dispatch_queue_t _queue; // 串行队列
 }
 
 - (void)_trimRecursively {
