@@ -185,17 +185,16 @@ YYMemoryCache负责处理容量小的，速度快的内存缓存，API和性能�
 #### LRU淘汰算法特点
 
 LRU（Least recently used，最近最少使用）算法根据数据的历史访问记录来进行淘汰数据，其核心思想是“如果数据最近被访问过，那么将来被访问的几率也更高”。他的特点是
-
-![](https://github.com/lyimin/YYCache/res/lru.png)
-
 - 新数据插入到链表头部
 - 每次缓存数据被访问，将数据移到链表头部
 - 当链表满的时候，将链表尾部的数据丢弃
 
+![](https://github.com/lyimin/YYCache/blob/master/res/lru.png)
+
 #### _YYLinkedMapNode 和 _YYLinkedMap
 上文中说到了LRU算法，这里的**_YYLinkedMap**相当于一个链表，而**_YYLinkedMapNode**其实就是链表中的一个节点。**_YYLinkedMap**负责节点的增删改查，而**_YYLinkedMapNode**则负责保存数据。
 
-``` objective-c
+```objective-c
 
 /**
     相当于_YYLinkedMap的一个节点
@@ -299,10 +298,7 @@ LRU（Least recently used，最近最少使用）算法根据数据的历史访�
 }
 ```
 
-作者在处理完要删除的数据后，都新开辟了一个异步线程调用```objective-c
-[holder count]
-```
-按道理，holder如果不调用count方法的话，应该在trimToXXX方法调用完，系统就会回收内存，作者为了性能考虑，将内存的释放放到了子线程去处理，因为block中引用了holder，所以holder会在block里面释放而不是在trimToXXX方法中释放。这一点我很佩服作者对性能的要求。
+作者在处理完要删除的数据后，都新开辟了一个异步线程调用**[holder count]**，按道理，holder如果不调用count方法的话，应该在trimToXXX方法调用完，系统就会回收内存，作者为了性能考虑，将内存的释放放到了子线程去处理，因为block中引用了holder，所以holder会在block里面释放而不是在trimToXXX方法中释放。这一点我很佩服作者对性能的要求。
 
 ### 5、YYDiskCache 源码分析
 
